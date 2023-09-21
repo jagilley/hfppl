@@ -9,7 +9,6 @@ class Infilling(Model):
         super().__init__()
         firstword = words.pop(0)
         self.context = LMContext(LLM, "<|endoftext|>" + firstword)
-        self.generation = 0
         self.s = firstword
         self.tokenized_words = [LLM.tokenizer.encode(word) for word in words]
     
@@ -24,7 +23,6 @@ class Infilling(Model):
             self.s += await self.observe(self.context.next_token(), token)
 
         print(str(self.s))
-        self.generation += 1
 
         if len(self.tokenized_words) == 0:
             self.observe(self.context.next_token(), LLM.tokenizer.eos_token_id)
