@@ -28,8 +28,7 @@ class ConstraintModel(Model):
         mask = self.active_constraint_mask()
         
         # Generate proposed token.
-        token = await self.sample(self.context.next_token(), 
-                                  proposal = await self.proposal(mask))
+        token = await self.sample(self.context.next_token(), proposal=await self.proposal(mask))
 
         # Condition on constraint — a no-op since proposal already guarantees the constraint
         self.condition(token.token_id in mask)

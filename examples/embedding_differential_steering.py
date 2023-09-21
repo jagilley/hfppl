@@ -23,7 +23,7 @@ class CosineSteeringModel2(Model):
 
     async def step(self):
         # Generate proposed token.
-        token = await self.sample(self.lm.next_token(),proposal = await self.proposal())
+        token = await self.sample(self.lm.next_token(), proposal = await self.proposal())
         token_embed = emb_model.encode(str(token))
         sim1 = cos_sim(target_embed_1, token_embed)[0][0].item()
         sim2 = cos_sim(target_embed_2, token_embed)[0][0].item()

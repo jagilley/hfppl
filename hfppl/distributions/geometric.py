@@ -1,4 +1,5 @@
 from .distribution import Distribution
+import numpy as np
 
 class Geometric(Distribution):
     """A Geometric distribution.
