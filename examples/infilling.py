@@ -25,16 +25,59 @@ class Infilling(Model):
         print(str(self.s))
 
         if len(self.tokenized_words) == 0:
-            self.observe(self.context.next_token(), LLM.tokenizer.eos_token_id)
+            await self.observe(self.context.next_token(), LLM.tokenizer.eos_token_id)
             self.finish()
     
     def proposal(self):
         return self.context.next_token()
     
 async def main():
-    words = ["Well, you see, every", " he", " to", " another", "!"]
+    words = ["If you're in", ", pivot to", "."]
     model = Infilling(words)
     particles = await smc_standard(model, 20)
 
 if __name__=="__main__":
     asyncio.run(main())
+
+"""
+If you're in high school, pivot to
+If you're in Toronto,, pivot to
+If you're in an area, pivot to
+If you're in the mood, pivot to
+If you're in a little, pivot to
+If you're in Canada and, pivot to
+If you're in a hurry, pivot to
+If you're in a factory, pivot to
+If you're in Washington,, pivot to
+If you're in Croatia or, pivot to
+If you're in the midst, pivot to
+If you're in New York, pivot to
+If you're in North Carolina, pivot to
+If you're in Pennsylvania, you, pivot to
+If you're in desperate need of, pivot to
+If you're in the market for, pivot to
+If you're in agreement that consuming, pivot to
+If you're in need of Real, pivot to
+If you're in any doubt, either, pivot to
+If you're in business, etiquette may contain some fairly big ling, pivot to
+If you're in a hurry, pivot to one of.
+If you're in a hurry, pivot to the original.
+If you're in a hurry, pivot to MakeUse.
+If you're in a hurry, pivot to a major.
+If you're in high school, pivot to Google News.
+If you're in a hurry, pivot to a secondary.
+If you're in a factory, pivot to the safety.
+If you're in a hurry, pivot to this post.
+If you're in a hurry, pivot to your keyboard.
+If you're in North Carolina, pivot to 4chan. # this one's pretty good lmao
+If you're in North Carolina, pivot to Fox News.
+If you're in a hurry, pivot to the safer.
+If you're in a hurry, pivot to the newcomer list.
+If you're in North Carolina, pivot to AA & PP.
+If you're in a factory, pivot to the most convenient and.
+If you're in an area, pivot to the SATA3 (likely.
+If you're in a hurry, pivot toset your permit so that.
+If you're in North Carolina, pivot to States One and You Cause.
+If you're in a hurry, pivot to a world that is light on pro-LGBT.
+If you're in a hurry, pivot to downtrendlets (up now) or downt.
+"""
