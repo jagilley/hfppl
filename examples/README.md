@@ -2,7 +2,7 @@
 
 - Use e.g. Typescript compiler to check validity of completions at generation time
 - Generate valid JSON
-- Is single-embedding steering viable?
+- Is single-embedding steering viable? Subtract 0.5 from cosine similarity score, multiply resulting steering constant by 100 or so. OR you might need to calculate the cosine similarity relative to the other proto-completions.
     - Relatedly, is steering with a single text regressor viable?
 - Is steering based on maximizing the differential between the embedding of the string minus the token and the embedding of the string plus the token viable?
 - Fill in the blanks, maybe while also optimizing for a maximum possible text regressor score
