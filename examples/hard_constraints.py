@@ -1,7 +1,7 @@
 import string
 import asyncio
 from hfppl import Model, CachedCausalLM, Token, LMContext, smc_standard
-
+from string import punctuation
 
 # Load the language model. 
 # Vicuna is an open model; to use a model with restricted access, like LLaMA 2,
@@ -10,11 +10,27 @@ from hfppl import Model, CachedCausalLM, Token, LMContext, smc_standard
 LLM = CachedCausalLM.from_pretrained("lmsys/vicuna-7b-v1.5")
 LLM.batch_size = 40
 
-MASKS = {i : set(j for (j,v) in enumerate(LLM.vocab)
-                 if j != LLM.tokenizer.eos_token_id and '\n' not in v and
-                 any(c.isalpha() or c in string.punctuation for c in v) and
-                 len(v.strip()) <= 5 and (not v[0].isalpha() or i+len(v) <= 5))
-             for i in range(6)}
+MASKS = {}
+for i in range(6):
+    MASKS[i] = set()
+    for j, v in enumerate(LLM.vocab):
+        # Skip if j is the end-of-sentence token id
+        if j == LLM.tokenizer.eos_token_id:
+            continue
+        # Skip if v contains a newline character
+        if '\n' in v:
+            continue
+        # Skip if v does not contain an alphabetic character or punctuation
+        if not any(c.isalpha() or c in punctuation for c in v):
+            continue
+        # Skip if the length of v, after stripping leading and trailing whitespace, is more than 5
+        if len(v.strip()) > 4:
+            continue
+        # Skip if the first character of v is alphabetic and i plus the length of v is more than 5
+        if v[0].isalpha() and i + len(v) > 4:
+            continue
+        # If none of the conditions are met, add j to the set for the current i
+        MASKS[i].add(j)
 
 class ConstraintModel(Model):
     def __init__(self, prompt, max_tokens):

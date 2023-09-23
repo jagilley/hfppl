@@ -17,7 +17,7 @@ class CosineSteeringModel2(Model):
     def __init__(self, prompt, max_tokens):
         super().__init__()
         self.lm         = LMContext(LLM, prompt)
-        self.q          = LMContext(LLM, prompt)
+        self.lm          = LMContext(LLM, prompt)
         self.prompt_len = len(str(self.lm.s))
         self.max_tokens = max_tokens
 
@@ -40,10 +40,7 @@ class CosineSteeringModel2(Model):
             self.finish()
 
     async def proposal(self):
-        string_so_far = str(self.lm.s)
-
-        # Return the proposal's modified next-token distribution
-        return self.q.next_token()
+        return self.lm.next_token()
     
 prompt = "<|endoftext|>Today, I'm feeling very"
 
