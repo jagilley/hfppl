@@ -21,7 +21,7 @@ class CosineSteeringModel2(Model):
 
     async def step(self):
         # Generate proposed token.
-        token = await self.sample(self.lm.next_token(),proposal = await self.proposal())
+        token = await self.sample(self.lm.next_token(), proposal = await self.proposal())
         token_embed = emb_model.encode(str(token))
         sim = cos_sim(target_embed_1, token_embed)[0][0].item()
         diff = (sim - 0.5) * 100
@@ -37,9 +37,6 @@ class CosineSteeringModel2(Model):
             self.finish()
 
     async def proposal(self):
-        string_so_far = str(self.lm.s)
-
-        # Return the proposal's modified next-token distribution
         return self.q.next_token()
     
 prompt = "<|endoftext|>Today, I'm feeling very"

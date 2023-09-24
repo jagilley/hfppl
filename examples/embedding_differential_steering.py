@@ -3,7 +3,7 @@ from hfppl import Model, CachedCausalLM, Token, LMContext, smc_standard
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
 
-LLM = CachedCausalLM.from_pretrained("gpt2")
+LLM = CachedCausalLM.from_pretrained("lmsys/vicuna-7b-v1.5")
 LLM.batch_size = 40
 
 emb_model = SentenceTransformer('thenlper/gte-base')
@@ -17,7 +17,6 @@ class CosineSteeringModel2(Model):
     def __init__(self, prompt, max_tokens):
         super().__init__()
         self.lm         = LMContext(LLM, prompt)
-        self.lm          = LMContext(LLM, prompt)
         self.prompt_len = len(str(self.lm.s))
         self.max_tokens = max_tokens
 
