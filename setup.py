@@ -16,6 +16,9 @@ setup(
                       'bitsandbytes',
                       'accelerate',
                       'sentencepiece'
+                      'networkx',
+                      'matplotlib',
+                      'sentence_transformers',
                       ],
 
     classifiers=[

@@ -7,7 +7,7 @@ from string import punctuation
 # Vicuna is an open model; to use a model with restricted access, like LLaMA 2,
 # pass your HuggingFace API key as the optional `auth_token` argument:
 #    LLM = CachedCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf", auth_token=HF_AUTH_TOKEN)
-LLM = CachedCausalLM.from_pretrained("lmsys/vicuna-7b-v1.5")
+LLM = CachedCausalLM.from_pretrained("gpt2")
 LLM.batch_size = 40
 
 MASKS = {}

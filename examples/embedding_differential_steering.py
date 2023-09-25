@@ -1,9 +1,10 @@
 import asyncio
 from hfppl import Model, CachedCausalLM, Token, LMContext, smc_standard
+from hfppl.util import show_graph
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
 
-LLM = CachedCausalLM.from_pretrained("lmsys/vicuna-7b-v1.5")
+LLM = CachedCausalLM.from_pretrained("gpt2")
 LLM.batch_size = 40
 
 emb_model = SentenceTransformer('thenlper/gte-base')
@@ -26,7 +27,7 @@ class CosineSteeringModel2(Model):
         token_embed = emb_model.encode(str(token))
         sim1 = cos_sim(target_embed_1, token_embed)[0][0].item()
         sim2 = cos_sim(target_embed_2, token_embed)[0][0].item()
-        diff = (sim2 - sim1) * 1000 # sim2 - sim1 for positive sentiment, sim1 - sim2 for negative sentiment
+        diff = (sim2 - sim1) * 100 # sim2 - sim1 for positive sentiment, sim1 - sim2 for negative sentiment
         self.twist(diff)
 
         # Reduce number of max tokens remaining
@@ -46,11 +47,13 @@ prompt = "<|endoftext|>Today, I'm feeling very"
 LLM.cache_kv(LLM.tokenizer.encode(prompt))
 
 async def main():
-    constraint_model = CosineSteeringModel2(prompt, 50)
+    constraint_model = CosineSteeringModel2(prompt, 10)
     # constraint_model = ConstraintModel(prompt, 50)
     particles = await smc_standard(constraint_model, 20)
     for p in particles:
         print(str(p.lm.s)[p.prompt_len:])
+    
+    show_graph(LLM)
 
 # Run the model
 asyncio.run(main())
