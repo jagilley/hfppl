@@ -6,6 +6,8 @@ LLaMPPL is a research prototype for language model probabilistic programming: sp
 
 This repository implements LLaMPPL for use with HuggingFace Transformers.
 
+![](trie_graph.png)
+
 ## Installation
 
 If you just want to try out LLaMPPL, check out our [demo notebook on Colab](https://colab.research.google.com/drive/1uJEC-U8dcwsTWccCDGVexpgXexzZ642n?usp=sharing), which performs a simple constrained generation task using GPT-2. (Larger models may require more RAM or GPU resources than Colab's free version provides.)

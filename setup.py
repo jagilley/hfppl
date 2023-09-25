@@ -15,7 +15,7 @@ setup(
                       'transformers==4.30',
                       'bitsandbytes',
                       'accelerate',
-                      'sentencepiece'
+                      'sentencepiece',
                       'networkx',
                       'matplotlib',
                       'sentence_transformers',

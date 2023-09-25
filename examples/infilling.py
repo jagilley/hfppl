@@ -1,5 +1,6 @@
 import asyncio
 from hfppl import Model, CachedCausalLM, Token, LMContext, smc_standard, Geometric
+from hfppl.util import show_graph
 
 LLM = CachedCausalLM.from_pretrained("gpt2")
 LLM.batch_size = 40
@@ -35,6 +36,8 @@ async def main():
     words = ["If you're in", ", pivot to", "."]
     model = Infilling(words)
     particles = await smc_standard(model, 20)
+
+    show_graph(LLM)
 
 if __name__=="__main__":
     asyncio.run(main())
