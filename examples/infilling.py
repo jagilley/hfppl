@@ -1,8 +1,16 @@
 import asyncio
 from hfppl import Model, CachedCausalLM, Token, LMContext, smc_standard, Geometric
 from hfppl.util import show_graph
+from ctransformers import AutoModelForCausalLM
+import torch
+from transformers import AutoTokenizer
 
-LLM = CachedCausalLM.from_pretrained("gpt2")
+with torch.no_grad():
+    tok = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
+    mod = AutoModelForCausalLM.from_pretrained("TheBloke/Mistral-7B-Instruct-v0.1-GGUF", model_file="mistral-7b-instruct-v0.1.Q2_K.gguf", model_type="mistral", gpu_layers=50, hf=True)
+    # tok = AutoTokenizer.from_pretrained(mod)
+
+LLM = CachedCausalLM.from_pretrained(mod, tok)
 LLM.batch_size = 40
 
 class Infilling(Model):
@@ -23,7 +31,7 @@ class Infilling(Model):
         for token in self.tokenized_words.pop(0):
             self.s += await self.observe(self.context.next_token(), token)
 
-        print(str(self.s))
+        print(str(self.s), self.weight)
 
         if len(self.tokenized_words) == 0:
             await self.observe(self.context.next_token(), LLM.tokenizer.eos_token_id)

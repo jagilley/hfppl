@@ -199,7 +199,7 @@ class CachedCausalLM:
     """
     
     @classmethod
-    def from_pretrained(cls, model_id, auth_token=False, quantization=8):
+    def from_pretrained(cls, mod, tok):
         """Create a [`CachedCausalLM`][hfppl.llms.CachedCausalLM] from a pretrained HuggingFace model.
         
         Args:
@@ -210,21 +210,7 @@ class CachedCausalLM:
         Returns:
             model (hfppl.llms.CachedCausalLM): the LLaMPPL-compatible interface to the HuggingFace model.
         """
-        if quantization == 8:
-            with torch.no_grad():
-                tok = AutoTokenizer.from_pretrained(model_id, use_auth_token=auth_token)
-                mod = AutoModelForCausalLM.from_pretrained(model_id, do_sample=True, use_auth_token=auth_token, device_map="auto", load_in_8bit=True)
-        elif quantization == 4:
-            with torch.no_grad():
-                tok = AutoTokenizer.from_pretrained(model_id, use_auth_token=auth_token)
-                mod = AutoModelForCausalLM.from_pretrained(model_id, do_sample=True, use_auth_token=auth_token, device_map="auto", load_in_4bit=True)
-        elif quantization == None:
-            with torch.no_grad():
-                tok = AutoTokenizer.from_pretrained(model_id, use_auth_token=auth_token)
-                mod = AutoModelForCausalLM.from_pretrained(model_id, do_sample=True, use_auth_token=auth_token, device_map="auto")
-        else:
-            raise AssertionError("Quantization must be 8, 4, or None")
-            
+
         return CachedCausalLM(mod, tok)
     
     @torch.no_grad()
@@ -239,14 +225,14 @@ class CachedCausalLM:
         """
         self.model = hf_model
         self.tokenizer = hf_tokenizer
-        self.device = hf_model.device
+        self.device = "cpu" if not torch.cuda.is_available() else "cuda:0"
         
         # TODO: remove required BOS token
         if self.tokenizer.bos_token_id is None:
             raise RuntimeError("Causal LM has no BOS token, distribution of first word unclear")
         
         # Evaluate BOS token
-        logits   = self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)).loss['logits'][0][0]
+        logits   = self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.device))[0][0]
         logprobs = torch.log_softmax(logits, 0)
         
         self.cache = TokenTrie(None, logprobs.cpu().numpy())
@@ -399,8 +385,8 @@ class CachedCausalLM:
         if next_token_index == len(token_ids):
             return node.logprobs
         
-        logits = self.model(torch.tensor([token_ids[base:]]).to(self.device), past_key_values=node.past_key_values, use_cache=node.past_key_values is not None).logits[0]
-        
+        logits = self.model(torch.tensor([token_ids[base:]]).to(self.device), past_key_values=node.past_key_values, use_cache=node.past_key_values is not None)[0][0]
+        print(logits)
         node = node.extend_cache(next_token_index, token_ids, logits, base)
         
         return node.logprobs
