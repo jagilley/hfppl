@@ -10,3 +10,7 @@
 - GAN: generate a completion, then check if it is distinguishable from other completions in a set. Modify hyperparameters/steering embedding to make it theoretically more similar to the other set members. Gradient descend.
 - Does weight represent likelihood assigned by the model?
 - Web/API interface: build HFPPL model via web code editor (or CLI?), assign to unique ID, get completion by calling an API with the HFPPL model ID, LLM from HF hub, and the model signature (prompt, etc.) Should look kinda like Apify.
+    - would need to deploy the hfppl code to a server, instantiate the transformers model/tokenizer
+    - upload the PPL decoding model via API/CLI, store in db for future use
+    - call the API with PPL model ID, transformers model ID, and prompt
+    - get completion by instantiating PPL model, calling using hf transformers' native support for AWQ models. static batching is probably fine initially. continuous batching offers 2x throughput gain @ 32 max 32 tokens -> 10x gain @ 512 max tokens.
