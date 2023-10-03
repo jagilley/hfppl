@@ -3,12 +3,14 @@ import asyncio
 from hfppl import Model, CachedCausalLM, Token, LMContext, smc_standard
 from string import punctuation
 from hfppl.util import show_graph
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
 
-# Load the language model. 
-# Vicuna is an open model; to use a model with restricted access, like LLaMA 2,
-# pass your HuggingFace API key as the optional `auth_token` argument:
-#    LLM = CachedCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf", auth_token=HF_AUTH_TOKEN)
-LLM = CachedCausalLM.from_pretrained("gpt2")
+with torch.no_grad():
+    tok = AutoTokenizer.from_pretrained("gpt2")
+    mod = AutoModelForCausalLM.from_pretrained("gpt2", do_sample=True, device_map="auto", load_in_8bit=True)
+
+LLM = CachedCausalLM.from_pretrained(mod, tok)
 LLM.batch_size = 40
 
 MASKS = {}

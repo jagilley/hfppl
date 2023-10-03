@@ -1,7 +1,9 @@
 ## Ideas for future examples/demos
 
 - Use e.g. Typescript compiler to check validity of completions at generation time
-    - checking validity on a per-token basis is impractical, so you'd need a lineage of completions to go 3-5 tokens without generating compilable Typescript before you could cull it. Should be doable with the way that `Model` class member variables are handled??
+    - checking validity on a per-token basis is impractical, so you'd need a lineage of completions to go 3-5 tokens without generating compilable Typescript before you could cull it.
+    - maybe you need to break at control characters, e.g. parentheses for Typescript, quotes for JSON, etc
+    - backtracking n characters/tokens until you can get syntactically valid json? still requires unidirectional parsing support
 - Generate valid JSON
 - Single-embedding steering: Subtract 0.5 from cosine similarity score, multiply resulting steering constant by 100 or so. OR you might need to calculate the cosine similarity relative to the other proto-completions.
 - Is steering based on maximizing the delta between the embedding of the string minus the token and the embedding of the string plus the token viable?
@@ -14,3 +16,4 @@
     - upload the PPL decoding model via API/CLI, store in db for future use
     - call the API with PPL model ID, transformers model ID, and prompt
     - get completion by instantiating PPL model, calling using hf transformers' native support for AWQ models. static batching is probably fine initially. continuous batching offers 2x throughput gain @ 32 max 32 tokens -> 10x gain @ 512 max tokens.
+- If I'm understanding correctly, llama.cpp's grammar sampling works by zeroing out the logits of sampled tokens that don't conform to the BNF grammar.

@@ -3,8 +3,14 @@ from hfppl import Model, CachedCausalLM, Token, LMContext, smc_standard
 from hfppl.util import show_graph
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
 
-LLM = CachedCausalLM.from_pretrained("gpt2")
+with torch.no_grad():
+    tok = AutoTokenizer.from_pretrained("gpt2")
+    mod = AutoModelForCausalLM.from_pretrained("gpt2", do_sample=True, device_map="auto", load_in_8bit=True)
+
+LLM = CachedCausalLM.from_pretrained(mod, tok)
 LLM.batch_size = 40
 
 emb_model = SentenceTransformer('thenlper/gte-base')

@@ -1,8 +1,14 @@
 from hfppl  import Model, CachedCausalLM, Token, LMContext, smc_standard
 from string import punctuation
 import asyncio
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
 
-LLM = CachedCausalLM.from_pretrained("gpt2")
+with torch.no_grad():
+    tok = AutoTokenizer.from_pretrained("gpt2")
+    mod = AutoModelForCausalLM.from_pretrained("gpt2", do_sample=True, device_map="auto", load_in_8bit=True)
+
+LLM = CachedCausalLM.from_pretrained(mod, tok)
 LLM.batch_size = 40
 
 MASKS = set()

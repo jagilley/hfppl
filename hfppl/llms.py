@@ -199,7 +199,7 @@ class CachedCausalLM:
     """
     
     @classmethod
-    def from_pretrained(cls, model_id, auth_token=False, quantization=8):
+    def from_pretrained(cls, mod, tok):
         """Create a [`CachedCausalLM`][hfppl.llms.CachedCausalLM] from a pretrained HuggingFace model.
         
         Args:
@@ -209,6 +209,7 @@ class CachedCausalLM:
         
         Returns:
             model (hfppl.llms.CachedCausalLM): the LLaMPPL-compatible interface to the HuggingFace model.
+        """
         """
         if quantization == 8:
             with torch.no_grad():
@@ -224,7 +225,7 @@ class CachedCausalLM:
                 mod = AutoModelForCausalLM.from_pretrained(model_id, do_sample=True, use_auth_token=auth_token, device_map="auto")
         else:
             raise AssertionError("Quantization must be 8, 4, or None")
-            
+        """
         return CachedCausalLM(mod, tok)
     
     @torch.no_grad()

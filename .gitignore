@@ -2,8 +2,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.cog
 NOTES.md
+jsonstream.py
 mistral.py
+hfppl-host
 
 # C extensions
 *.so

@@ -2,8 +2,14 @@ import json
 from hfppl import Model, LMContext, TokenCategorical, CachedCausalLM
 from hfppl.util import show_graph
 from string import punctuation
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
 
-lm = CachedCausalLM.from_pretrained("gpt2")
+with torch.no_grad():
+    tok = AutoTokenizer.from_pretrained("gpt2")
+    mod = AutoModelForCausalLM.from_pretrained("gpt2", do_sample=True, device_map="auto", load_in_8bit=True)
+
+lm = CachedCausalLM.from_pretrained(mod, tok)
 lm.batch_size = 40
 
 # make forbidden tokens array of all tokens that are not valid JSON characters
