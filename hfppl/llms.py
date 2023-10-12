@@ -199,7 +199,7 @@ class CachedCausalLM:
     """
     
     @classmethod
-    def from_pretrained(cls, mod, tok):
+    def from_pretrained(cls, model_id, auth_token=False, load_in_8bit=False):
         """Create a [`CachedCausalLM`][hfppl.llms.CachedCausalLM] from a pretrained HuggingFace model.
         
         Args:
@@ -210,22 +210,10 @@ class CachedCausalLM:
         Returns:
             model (hfppl.llms.CachedCausalLM): the LLaMPPL-compatible interface to the HuggingFace model.
         """
-        """
-        if quantization == 8:
-            with torch.no_grad():
-                tok = AutoTokenizer.from_pretrained(model_id, use_auth_token=auth_token)
-                mod = AutoModelForCausalLM.from_pretrained(model_id, do_sample=True, use_auth_token=auth_token, device_map="auto", load_in_8bit=True)
-        elif quantization == 4:
-            with torch.no_grad():
-                tok = AutoTokenizer.from_pretrained(model_id, use_auth_token=auth_token)
-                mod = AutoModelForCausalLM.from_pretrained(model_id, do_sample=True, use_auth_token=auth_token, device_map="auto", load_in_4bit=True)
-        elif quantization == None:
-            with torch.no_grad():
-                tok = AutoTokenizer.from_pretrained(model_id, use_auth_token=auth_token)
-                mod = AutoModelForCausalLM.from_pretrained(model_id, do_sample=True, use_auth_token=auth_token, device_map="auto")
-        else:
-            raise AssertionError("Quantization must be 8, 4, or None")
-        """
+        with torch.no_grad():
+            tok = AutoTokenizer.from_pretrained(model_id, use_auth_token=auth_token)
+            mod = AutoModelForCausalLM.from_pretrained(model_id, do_sample=True, use_auth_token=auth_token, device_map="auto", load_in_8bit=load_in_8bit)
+        
         return CachedCausalLM(mod, tok)
     
     @torch.no_grad()
@@ -245,8 +233,6 @@ class CachedCausalLM:
         # TODO: remove required BOS token
         if self.tokenizer.bos_token_id is None:
             raise RuntimeError("Causal LM has no BOS token, distribution of first word unclear")
-        
-        print("hf model is", self.model)
         
         # Evaluate BOS token
         logits = self.model(
