@@ -235,10 +235,10 @@ class CachedCausalLM:
             raise RuntimeError("Causal LM has no BOS token, distribution of first word unclear")
         
         # Evaluate BOS token
-        logits = self.model(
-            torch.tensor([[self.tokenizer.bos_token_id]])
-            .to(self.model.device)
-        ).loss['logits'][0][0]
+        print("thing1 is", self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)).loss)
+        print("thing2 is", self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)).loss['logits'])
+        print("thing3 is", self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)).loss['logits'][0])
+        logits = self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)).loss['logits'][0][0]
         logprobs = torch.log_softmax(logits, 0)
         
         self.cache = TokenTrie(None, logprobs.cpu().numpy())
