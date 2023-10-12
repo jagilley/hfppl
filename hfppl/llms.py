@@ -235,11 +235,11 @@ class CachedCausalLM:
             raise RuntimeError("Causal LM has no BOS token, distribution of first word unclear")
         
         # Evaluate BOS token
-        print("thing-1 is", self.model(torch.tensor([[self.tokenizer.bos_token_id]])))
-        print("thing0 is", self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)))
-        print("thing1 is", self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)).loss)
-        print("thing2 is", self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)).loss['logits'])
-        print("thing3 is", self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)).loss['logits'][0])
+        # print("thing-1 is", self.model(torch.tensor([[self.tokenizer.bos_token_id]])))
+        # print("thing0 is", self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)))
+        # print("thing1 is", self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)).loss)
+        # print("thing2 is", self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)).loss['logits'])
+        # print("thing3 is", self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)).loss['logits'][0])
         logits = self.model(torch.tensor([[self.tokenizer.bos_token_id]]).to(self.model.device)).loss['logits'][0][0]
         logprobs = torch.log_softmax(logits, 0)
         
