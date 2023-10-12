@@ -9,17 +9,6 @@ setup(
     author='Alex Lew',
     author_email='alexlew@mit.edu',
     license='MIT',
-    packages=setuptools.find_packages(),
-    install_requires=['torch',
-                      'numpy',
-                      'transformers==4.30',
-                      'bitsandbytes',
-                      'accelerate',
-                      'sentencepiece',
-                      'networkx',
-                      'matplotlib',
-                      'sentence_transformers',
-                      ],
 
     classifiers=[
         'Programming Language :: Python :: 3.10',
